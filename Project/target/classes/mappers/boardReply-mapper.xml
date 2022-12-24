@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="project.shopping.musinsa.BoardReplyMapper">
+	
+	<insert id="reply_insert">
+		insert into ${boardReply}
+		(${boardNumber}, ${userId}, ${replyContent})
+		values (#{boardNumber}, #{userId}, #{replyContent})
+	</insert>
+	
+	<select id="select_all_by_board_number" resultType="BoardReplyVO">
+		select * from ${boardReply}
+		where ${boardNumber} = #{boardNumber}
+		order by ${replyNumber}
+	</select>
+	
+	<update id="reply_update">
+		update ${boardReply}
+		set ${replyContent} = #{replyContent}
+		where ${replyNumber} = #{replyNumber}
+	</update>
+	
+	<delete id="reply_delete">
+		delete from ${boardReply}
+		where ${replyNumber} = #{replyNumber}
+	</delete>
+</mapper>

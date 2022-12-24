@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="project.shopping.musinsa.boardMapper">
+
+	<!-- 게시물 등록-->
+	<insert id="board_insert">
+		insert into ${board} (${boardNumber}, ${userId}, ${boardTitle}, ${boardContent}, ${boardQnAList})
+		values (SEQ_BOARD.NEXTVAL, #{userId}, #{boardTitle}, #{boardContent}, #{boardQnAList})
+	</insert>
+	
+	
+	<!-- 게시물 검색  <select는 resultType> 필수 -->
+	<select id="select_by_board_number" resultType = "boardVO">
+	select * from ${board} 
+	where ${boardNumber} = #{boardNumber}
+	</select>
+	
+
+	<!-- 사용자용 게시물 검색-->
+	<select id ="user_select_all" resultType = "boardVO"> 
+		select b.${boardNumber}, b.${boardTitle}, b.${boardContent}, b.${userId}, b.${boardDateCreated}, b.${boardQnAList} from(
+			select rownum rn, a.* from(
+				select * from 
+					(select * from ${board} where ${userId} = #{userId})
+				${board} order by ${boardNumber} desc
+			)a
+		)b where rn between #{start} and #{end}
+	</select>
+	
+	<!-- 관리자용 게시물 검색-->
+	<select id="paging" resultType="BoardVO">
+		select b.${boardNumber}, b.${boardTitle}, b.${boardContent}, b.${userId},b.${boardDateCreated}, b.${boardQnAList} from(
+			select rownum rn, a.* from(
+				select * from ${board} order by ${boardNumber} desc
+			)a
+		)b where rn between #{start} and #{end}
+	</select>
+		
+	 <!-- 게시물 수정 -->
+	<update id="board_update">
+	update  ${board}
+	set ${boardTitle} = #{boardTitle}, 
+	 ${boardContent} = #{boardContent},
+	 ${boardDateCreated} = SYSDATE,
+	 ${boardQnAList} = #{boardQnAList}
+	where ${boardNumber} = #{boardNumber}
+	</update>
+	
+	 <!-- 게시물 삭제 -->
+	<delete id="board_delete">
+	delete from ${board}
+	where ${boardNumber} = #{boardNumber}
+	</delete>
+		
+	<select id="total_count" resultType="Integer">
+		select count(*) total_cnt from ${board}
+	</select>
+	
+	<select id="user_board_count" resultType="Integer">
+		select count (*) total_cnt from ${board} where ${userId} = #{userId}
+	</select>
+	
+		<select id="select_by_userid" resultType="BoardVO">
+		select * from ${board}
+		where ${userId} like #{userId}
+	</select>
+	
+	</mapper>
